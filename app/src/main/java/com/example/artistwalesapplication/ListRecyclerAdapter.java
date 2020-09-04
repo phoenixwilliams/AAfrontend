@@ -79,7 +79,7 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
         }
         else
         {
-            //Log.v("contactURL","if false");
+            Log.v("contactURL","if false");
             holder.listItemNumberView.setText(spannableString);
         }
 
