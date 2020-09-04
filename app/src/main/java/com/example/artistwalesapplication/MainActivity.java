@@ -93,6 +93,52 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        blog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startChildActivityIntent = new Intent(MainActivity.this,BlogActivity.class);
+                JSONArray blogJsonData;
+                ErrorUI errorUI = new ErrorUI("SERVER ERROR: ENSURE DEVICE IS CONNECTED TO THE INTERNET"+
+                        "AND RESTART APPLICATION");
+                Thread errorThread;
+                try{
+                    blogJsonData = jsonData.getJSONArray("blog");
+                    startChildActivityIntent.putExtra(Intent.EXTRA_TEXT,blogJsonData.toString());
+                    startActivity(startChildActivityIntent);
+                } catch (JSONException e) {
+                    errorThread = new Thread(errorUI);
+                    errorThread.start();
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startChildActivityIntent = new Intent(MainActivity.this,ContactActivity.class);
+                JSONArray contactJsonData;
+                ErrorUI errorUI = new ErrorUI("SERVER ERROR: ENSURE DEVICE IS CONNECTED TO THE INTERNET"+
+                        "AND RESTART APPLICATION");
+                Thread errorThread;
+
+
+                try{
+                    contactJsonData = jsonData.getJSONArray("contact");
+                    Log.v("jsonCheck",jsonData.toString());
+                    startChildActivityIntent.putExtra(Intent.EXTRA_TEXT,contactJsonData.toString());
+                    startActivity(startChildActivityIntent);
+                } catch (JSONException e) {
+                    errorThread = new Thread(errorUI);
+                    errorThread.start();
+                    e.printStackTrace();
+                }
+                startActivity(startChildActivityIntent);
+            }
+        });
+
+
     }
 
     class MainUI implements Runnable
@@ -179,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
     class SetUpMainUrl implements Runnable
     {
 
-        private String jsonAPI = "https://api.jsonbin.io/b/5f231a99dc263a7b80b083d9";
+        private String jsonAPI = "https://api.jsonbin.io/b/5f22f458250d377b5dc700da/latest";
         private String jsonHeader = "$2b$10$n/istDwcPLjoT1Sc10mNA.rmT3.ScWeXA3/PZQY/SgGz/YeBvEQGu";
 
         @Override

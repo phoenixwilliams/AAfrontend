@@ -2,61 +2,41 @@ package com.example.artistwalesapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class WorkActivity extends AppCompatActivity
+import java.util.Arrays;
+
+public class BlogActivity extends AppCompatActivity
 {
     private String jsonString;
     private ProgressBar progressBar;
-
-    private Bitmap[] workImages;
-    private String[] imageLabels;
-    private String[] workPrices;
+    private String[] blogs;
+    private String[] dates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.work_activity);
+        setContentView(R.layout.blog_activity);
         this.getSupportActionBar().hide();
 
         Intent intentThatStartedThisActivity = getIntent();
-
         if(intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT))
         {
             jsonString = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
-            progressBar = (ProgressBar)findViewById(R.id.retrieving_work_progress_bar);
+            progressBar = (ProgressBar)findViewById(R.id.retrieving_blog_progress_bar);
+
             WorkUI workUI = new WorkUI(this);
-            Thread workUIThread = new Thread(workUI);
-            workUIThread.start();
+            Thread workThread = new Thread(workUI);
+            workThread.start();
         }
     }
-
-    /**
-    class RecyclerUI implements Runnable
-    {
-        private WorkRecyclerAdapter recyclerAdapterUI;
-        private RecyclerView recyclerView;
-
-        public RecyclerUI(WorkRecyclerAdapter recyclerAdapter, RecyclerView recyclerView)
-        {
-            this.recyclerAdapterUI = recyclerAdapter;
-            this.recyclerView = recyclerView;
-        }
-
-        @Override
-        public void run() {
-            recyclerView.setAdapter(recyclerAdapterUI);
-        }
-    }
-        */
 
     public class WorkUI implements Runnable
     {
@@ -66,7 +46,7 @@ public class WorkActivity extends AppCompatActivity
 
         private RecyclerView recyclerView;
         private RecyclerView.LayoutManager layoutManager;
-        private WorkRecyclerAdapter workRecyclerAdapter;
+        private BlogRecyclerAdapter blogRecyclerAdapter;
 
         public WorkUI(Context context)
         {
@@ -87,12 +67,12 @@ public class WorkActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     progressBar.setVisibility(View.INVISIBLE);
-                    recyclerView = (RecyclerView) findViewById(R.id.workRecyclerView);
+                    recyclerView = (RecyclerView) findViewById(R.id.blogRecyclerView);
                     layoutManager = new LinearLayoutManager(context);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(layoutManager);
-                    workRecyclerAdapter = new WorkRecyclerAdapter(workImages, imageLabels, workPrices);
-                    recyclerView.setAdapter(workRecyclerAdapter);
+                    blogRecyclerAdapter = new BlogRecyclerAdapter(blogs,dates);
+                    recyclerView.setAdapter(blogRecyclerAdapter);
                 }
             });
 
@@ -103,10 +83,8 @@ public class WorkActivity extends AppCompatActivity
     {
         @Override
         public void run() {
-            workImages = WorkJsonHandler.getWorkImages(jsonString);
-            imageLabels = WorkJsonHandler.getWorkLabels(jsonString);
-            workPrices = WorkJsonHandler.getWorkPrices(jsonString);
+            blogs = WorkJsonHandler.getBlogs(jsonString);
+            dates = WorkJsonHandler.getBlogDates(jsonString);
         }
     }
-
 }

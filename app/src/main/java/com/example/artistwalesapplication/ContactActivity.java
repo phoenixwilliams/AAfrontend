@@ -2,75 +2,75 @@ package com.example.artistwalesapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class WorkActivity extends AppCompatActivity
+import java.util.Arrays;
+
+public class ContactActivity extends AppCompatActivity
 {
-    private String jsonString;
+    private ListRecyclerAdapter listRecyclerAdapter;
+    private RecyclerView recyclerView;
     private ProgressBar progressBar;
 
-    private Bitmap[] workImages;
-    private String[] imageLabels;
-    private String[] workPrices;
+    private String[] contact;
+    private String[] contactDetails;
+    private String jsonString;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.work_activity);
+        setContentView(R.layout.number_list_activity);
         this.getSupportActionBar().hide();
-
         Intent intentThatStartedThisActivity = getIntent();
-
         if(intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT))
         {
             jsonString = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
-            progressBar = (ProgressBar)findViewById(R.id.retrieving_work_progress_bar);
-            WorkUI workUI = new WorkUI(this);
-            Thread workUIThread = new Thread(workUI);
-            workUIThread.start();
+            progressBar = (ProgressBar)findViewById(R.id.contact_progress_bar);
+
+            WorkUI workUI = new WorkUI(this,this);
+            Thread workThread = new Thread(workUI);
+            workThread.start();
+
         }
+
     }
 
-    /**
-    class RecyclerUI implements Runnable
+    public void openWebPage(String url)
     {
-        private WorkRecyclerAdapter recyclerAdapterUI;
-        private RecyclerView recyclerView;
-
-        public RecyclerUI(WorkRecyclerAdapter recyclerAdapter, RecyclerView recyclerView)
-        {
-            this.recyclerAdapterUI = recyclerAdapter;
-            this.recyclerView = recyclerView;
-        }
-
-        @Override
-        public void run() {
-            recyclerView.setAdapter(recyclerAdapterUI);
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
         }
     }
-        */
 
     public class WorkUI implements Runnable
     {
         private Thread retrieveWorkThread;
         private RetrieveWork retrieveWork;
         private Context context;
+        private ContactActivity contactActivity;
 
         private RecyclerView recyclerView;
         private RecyclerView.LayoutManager layoutManager;
-        private WorkRecyclerAdapter workRecyclerAdapter;
+        private ListRecyclerAdapter listRecyclerAdapter;
 
-        public WorkUI(Context context)
+        public WorkUI(Context context, ContactActivity contactActivity)
         {
             this.context = context;
+            this.contactActivity = contactActivity;
         }
         @Override
         public void run() {
@@ -87,12 +87,13 @@ public class WorkActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     progressBar.setVisibility(View.INVISIBLE);
-                    recyclerView = (RecyclerView) findViewById(R.id.workRecyclerView);
+                    recyclerView = (RecyclerView) findViewById(R.id.rv_numbers);
+
                     layoutManager = new LinearLayoutManager(context);
-                    recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(layoutManager);
-                    workRecyclerAdapter = new WorkRecyclerAdapter(workImages, imageLabels, workPrices);
-                    recyclerView.setAdapter(workRecyclerAdapter);
+                    recyclerView.setHasFixedSize(true);
+                    listRecyclerAdapter = new ListRecyclerAdapter(contact,contactDetails,contactActivity);
+                    recyclerView.setAdapter(listRecyclerAdapter);
                 }
             });
 
@@ -103,9 +104,8 @@ public class WorkActivity extends AppCompatActivity
     {
         @Override
         public void run() {
-            workImages = WorkJsonHandler.getWorkImages(jsonString);
-            imageLabels = WorkJsonHandler.getWorkLabels(jsonString);
-            workPrices = WorkJsonHandler.getWorkPrices(jsonString);
+            contact = WorkJsonHandler.getContactMethods(jsonString);
+            contactDetails = WorkJsonHandler.getContactDetails(jsonString);
         }
     }
 

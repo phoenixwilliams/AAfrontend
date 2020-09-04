@@ -42,7 +42,7 @@ public class WorkRecyclerAdapter extends RecyclerView.Adapter<WorkRecyclerAdapte
 
     @Override
     public int getItemCount() {
-        return images.length;
+       return images.length;
     }
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder

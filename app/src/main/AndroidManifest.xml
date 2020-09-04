@@ -18,6 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.artistwalesapplication.WorkActivity"></activity>
+        <activity android:name="com.example.artistwalesapplication.BlogActivity"></activity>
+        <activity android:name="com.example.artistwalesapplication.ContactActivity"></activity>
     </application>
 
 </manifest>
